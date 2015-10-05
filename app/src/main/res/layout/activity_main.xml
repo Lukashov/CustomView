@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!--<com.cuctomview.den.examplecustomview.ArcMenu-->
+        <!--android:id="@+id/crclMenu_AM"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true">-->
+
+    <!--</com.cuctomview.den.examplecustomview.ArcMenu>-->
+    <!-- -->
+    <!--<com.cuctomview.den.examplecustomview.MenuGroup-->
+        <!--android:id="@+id/menuGroup_AM"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+    <!--</com.cuctomview.den.examplecustomview.MenuGroup>-->
+
+    <FrameLayout
+        android:id="@+id/fLayout_AM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
+
+
+    </FrameLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Rotation"
+        android:id="@+id/button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
