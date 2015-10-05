@@ -17,23 +17,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArcMenu mArcMenu;
     private MenuGroup mMenuGroup;
 
-    private FrameLayout mFrameLayout;
+    private FrameMenu mFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFrameLayout = (FrameLayout) findViewById(R.id.fLayout_AM);
+        mFrameLayout = (FrameMenu) findViewById(R.id.fLayout_AM);
         mFrameLayout.addView(new ArcMenu(getApplicationContext(),0,72));
         mFrameLayout.addView(new ArcMenu(getApplicationContext(),72,72));
         mFrameLayout.addView(new ArcMenu(getApplicationContext(),144,72));
         mFrameLayout.addView(new ArcMenu(getApplicationContext(),216,72));
-        mFrameLayout.addView(new ArcMenu(getApplicationContext(),288,72));
+        mFrameLayout.addView(new ArcMenu(getApplicationContext(), 288, 72));
 
         Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(this);
 
+        mFrameLayout.setCustomEventListener(new FrameMenu.OnCustomEventListener() {
+            public void onEvent() {
+                Log.d("Touch: ","Down!");
+            }
+        });
     }
 
 
@@ -43,4 +48,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFrameLayout.startAnimation(animation);
 
     }
+
 }

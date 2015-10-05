@@ -146,38 +146,4 @@ public class ArcMenu extends View {
         mColor = color;
     }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        float x = event.getX();
-        float y = event.getY();
-        int action = event.getAction()& MotionEvent.ACTION_MASK;
-        String actionName = "";
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                actionName = "ACTION_DOWN";
-//                Toast.makeText(
-//                        getContext(),
-//                        actionName + " Координаты: " + x + " x "
-//                                + y, Toast.LENGTH_SHORT).show();
-                Log.d("Touch: ","Down!");
-                break;
-            case MotionEvent.ACTION_MOVE:
-                actionName = "ACTION_MOVE";
-//                Toast.makeText(getContext(), actionName, Toast.LENGTH_SHORT).show();
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
-                this.startAnimation(animation);
-                Log.d("Touch: ","Move!");
-                break;
-            case MotionEvent.ACTION_UP:
-                actionName = "ACTION_UP";
-//                Toast.makeText(getContext(), actionName, Toast.LENGTH_SHORT).show();
-                Log.d("Touch: ","Up!");
-                break;
-        }
-        invalidate();
-        return true;
-    }
-
 }

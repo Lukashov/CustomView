@@ -20,7 +20,7 @@
 
     <!--</com.cuctomview.den.examplecustomview.MenuGroup>-->
 
-    <FrameLayout
+    <com.cuctomview.den.examplecustomview.FrameMenu
         android:id="@+id/fLayout_AM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:layout_centerVertical="true">
 
 
-    </FrameLayout>
+    </com.cuctomview.den.examplecustomview.FrameMenu>
 
     <Button
         android:layout_width="wrap_content"
