@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mFrameLayout.setCustomEventListener(new FrameMenu.OnCustomEventListener() {
             public void onEvent() {
-                Log.d("Touch: ","Down!");
+                //do whatever you want to do when the event is performed.
             }
         });
     }

@@ -26,8 +26,8 @@ import android.widget.Toast;
  */
 public class ArcMenu extends View {
 
-    final int MIN_WIDTH = 400;
-    final int MIN_HEIGHT = 400;
+    final int MIN_WIDTH = 300;
+    final int MIN_HEIGHT = 300;
     final int DEFAULT_COLOR = Color.RED;
 
     private GestureDetector mDetector;
@@ -40,6 +40,9 @@ public class ArcMenu extends View {
     private Integer startAngle;
     private Integer endAngle;
     private ArcMenu arcMenu;
+
+    private RectF mBounds;
+
 
     public ArcMenu(Context context, Integer startAngle, Integer endAngle) {
         super(context);
@@ -75,6 +78,8 @@ public class ArcMenu extends View {
         setMinimumHeight(MIN_HEIGHT);
         mColor = DEFAULT_COLOR;
         mPaint = new Paint();
+
+
     }
 
     @Override
@@ -97,24 +102,24 @@ public class ArcMenu extends View {
         } else {
             radius = width / 2;
         }
-        final RectF rect = new RectF();
+//        final RectF rect = new RectF();
         //Example values
-        rect.set(width / 2 - radius + 10, height / 2 - radius + 10, width / 2 + radius - 10, height / 2 + radius - 10);
+        mBounds.set(width / 2 - radius + 10, height / 2 - radius + 10, width / 2 + radius - 10, height / 2 + radius - 10);
 
         //Fill Sector
         mPaint.setColor(mColor);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        canvas.drawArc(rect, startAngle, endAngle, true, mPaint);
+        canvas.drawArc(mBounds, startAngle, endAngle, true, mPaint);
 
         //Line
-        rect.set(width / 2 - radius + 5, height / 2 - radius + 5, width / 2 + radius - 5, height / 2 + radius - 5);
+        mBounds.set(width / 2 - radius + 5, height / 2 - radius + 5, width / 2 + radius - 5, height / 2 + radius - 5);
 
         mPaint.setColor(Color.GREEN);
         mPaint.setStrokeWidth(5);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawArc(rect, startAngle, endAngle, true, mPaint);
+        canvas.drawArc(mBounds, startAngle, endAngle, true, mPaint);
 
         //Ring1
         mPaint.setColor(Color.GREEN);
@@ -122,14 +127,14 @@ public class ArcMenu extends View {
         mPaint.setAntiAlias(true);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawArc(rect, 0, 360, false, mPaint);
+        canvas.drawArc(mBounds, 0, 360, false, mPaint);
 
-        rect.set(width / 2 - radius / 4, height / 2 - radius / 4, width / 2 + radius / 4, height / 2 + radius / 4);
+        mBounds.set(width / 2 - radius / 4, height / 2 - radius / 4, width / 2 + radius / 4, height / 2 + radius / 4);
         //Ring3
         mPaint.setColor(Color.BLUE);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        canvas.drawArc(rect, 0, 360, false, mPaint);
+        canvas.drawArc(mBounds, 0, 360, false, mPaint);
 
         //Ring2
         mPaint.setColor(Color.GREEN);
@@ -137,9 +142,14 @@ public class ArcMenu extends View {
         mPaint.setAntiAlias(true);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawArc(rect, 0, 360, false, mPaint);
+        canvas.drawArc(mBounds, 0, 360, false, mPaint);
 
         canvas.save();
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        mBounds = new RectF(0, 0, w, h);
     }
 
     public void setColor(int color) {

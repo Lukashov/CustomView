@@ -1,5 +1,6 @@
 package com.cuctomview.den.examplecustomview;
 
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.ClipData;
@@ -11,8 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
@@ -20,6 +19,7 @@ import android.widget.Scroller;
  * Created by Den on 05.10.15.
  */
 public class FrameMenu extends FrameLayout {
+
 
     OnCustomEventListener mListener;
     private RectF mPieBounds = new RectF();
@@ -29,13 +29,22 @@ public class FrameMenu extends FrameLayout {
     private ValueAnimator mScrollAnimator;
     private int mPieRotation;
 
-    private boolean mAutoCenterInSlice = false;
+    private OnCurrentItemChangedListener mCurrentItemChangedListener = null;
 
+    private boolean mAutoCenterInSlice = false;
+    private ObjectAnimator mAutoCenterAnimator;
 
     private float mRotation = 0;
 
     private double startAngle;
 
+    public interface OnCurrentItemChangedListener {
+        void OnCurrentItemChanged(FrameMenu source, int currentItem);
+    }
+
+    public void setOnCurrentItemChangedListener(OnCurrentItemChangedListener listener) {
+        mCurrentItemChangedListener = listener;
+    }
 
     public FrameMenu(Context context) {
         super(context);
@@ -68,6 +77,7 @@ public class FrameMenu extends FrameLayout {
 
 
     public void init (){
+
         if (Build.VERSION.SDK_INT < 11) {
             mScroller = new Scroller(getContext());
         } else {
@@ -85,16 +95,6 @@ public class FrameMenu extends FrameLayout {
         mDetector = new GestureDetectorCompat(getContext(), new MyGestureListener());
         mDetector.setIsLongpressEnabled(false);
 
-        int width = getWidth();
-        int height = getHeight();
-        int radius;
-
-        if (width > height) {
-            radius = height / 2;
-        } else {
-            radius = width / 2;
-        }
-        mPieBounds.set(width / 2 - radius + 10, height / 2 - radius + 10, width / 2 + radius - 10, height / 2 + radius - 10);
     }
 
     private void tickScrollAnimation() {
@@ -105,49 +105,18 @@ public class FrameMenu extends FrameLayout {
             if (Build.VERSION.SDK_INT >= 11) {
                 mScrollAnimator.cancel();
             }
-//            onScrollFinished();
         }
-    }
-
-//    private void onScrollFinished() {
-//        if (mAutoCenterInSlice) {
-//            centerOnCurrentItem();
-//        } else {
-//            mPieView.decelerate();
-//        }
-//    }
-
-//    private void centerOnCurrentItem() {
-//        Item current = mData.get(getCurrentItem());
-//        int targetAngle = current.mStartAngle + (current.mEndAngle - current.mStartAngle) / 2;
-//        targetAngle -= mCurrentItemAngle;
-//        if (targetAngle < 90 && mPieRotation > 180) targetAngle += 360;
-//
-//        if (Build.VERSION.SDK_INT >= 11) {
-//            // Fancy animated version
-//            mAutoCenterAnimator.setIntValues(targetAngle);
-//            mAutoCenterAnimator.setDuration(AUTOCENTER_ANIM_DURATION).start();
-//        } else {
-//            // Dull non-animated version
-//            //mPieView.rotateTo(targetAngle);
-//        }
-//    }
-
-    @Override
-    protected int computeHorizontalScrollRange()
-    {
-        return this.getWidth();
-    }
-
-    @Override
-    protected int computeVerticalScrollRange()
-    {
-        return this.getHeight();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = mDetector.onTouchEvent(event);
+
+        if (event.getAction()==MotionEvent.ACTION_DOWN) {
+            if(mListener!=null)
+                mListener.onEvent();
+            Log.d("COORD: ", "COORDX: " + event.getX() + " ,COORDY: " + event.getY());
+        }
 
         if (!result) {
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -174,6 +143,8 @@ public class FrameMenu extends FrameLayout {
         } else {
             invalidate();
         }
+
+
     }
 
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -191,23 +162,23 @@ public class FrameMenu extends FrameLayout {
             float scrollTheta = vectorToScalarScroll(
                     distanceX,
                     distanceY,
-                    e2.getX() - mPieBounds.centerX(),
-                    e2.getY() - mPieBounds.centerY());
+                    e2.getX() - getPieBounds().centerX(),
+                    e2.getY() - getPieBounds().centerY());
 
-            setPieRotation(getPieRotation() - (int) scrollTheta / 4);
+            setPieRotation(getPieRotation() - (int) (scrollTheta/4));
 
             return true;
         }
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            Log.d(DEBUG_TAG, "onFling: " + event1.toString()+event2.toString());
+            Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
 
             float scrollTheta = vectorToScalarScroll(
                     velocityX,
                     velocityY,
-                    event2.getX() - mPieBounds.centerX(),
-                    event2.getY() - mPieBounds.centerY());
+                    event2.getX() - getPieBounds().centerX(),
+                    event2.getY() - getPieBounds().centerY());
             mScroller.fling(
                     0,
                     (int) getPieRotation(),
@@ -221,9 +192,29 @@ public class FrameMenu extends FrameLayout {
             if (Build.VERSION.SDK_INT >= 11) {
                 mScrollAnimator.setDuration(mScroller.getDuration());
                 mScrollAnimator.start();
+
+                Log.d("DEBUG: ", "Coord: " + getPieBounds().centerX()+" , "+ getPieBounds().centerX());
+//                TODO: определить попадание точки в сектор
+
             }
             return true;
         }
+
+        private RectF getPieBounds() {
+            int width = getWidth();
+            int height = getHeight();
+            int radius;
+
+            if (width > height) {
+                radius = height / 2;
+            } else {
+                radius = width / 2;
+            }
+            mPieBounds.set(width / 2 - radius, height / 2 - radius, width / 2 + radius, height / 2 + radius);
+            return mPieBounds;
+        }
+
+
     }
 
     private static float vectorToScalarScroll(float dx, float dy, float x, float y) {
